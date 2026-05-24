@@ -1,29 +1,11 @@
 [
   {
-    "id": "HcEwjQOF",
+    "id": "ZO9RO5Ud",
     "email": "admin@shop.com",
     "first_name": "Admin",
     "last_name": "System",
     "role": "admin",
     "isActive": true,
-    "createdAt": "2026-05-10T07:50:05.425Z"
-  },
-  {
-    "id": "Vb2emRNj",
-    "email": "operator@shop.com",
-    "first_name": "Оператор",
-    "last_name": "Магазина",
-    "role": "operator",
-    "isActive": true,
-    "createdAt": "2026-05-10T07:50:05.426Z"
-  },
-  {
-    "id": "AQSX5dzd",
-    "email": "buyer@shop.com",
-    "first_name": "Покупатель",
-    "last_name": "Тестовый",
-    "role": "buyer",
-    "isActive": true,
-    "createdAt": "2026-05-10T07:50:05.426Z"
+    "createdAt": "2026-05-24T11:07:29.252Z"
   }
 ]
