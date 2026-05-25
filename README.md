@@ -358,16 +358,6 @@ npm start
 
 ---
 
-## Технологический стек
-
-- **Frontend:** HTML5, CSS (Chota), JavaScript (ES6+), LocalStorage
-- **Backend:** Node.js, Express, Socket.IO, Web-Push
-- **PWA:** Service Worker, Web App Manifest, App Shell
-- **Безопасность:** mkcert (локальный HTTPS), VAPID
-- **Инструменты:** npm, live-server / http-server, Chrome DevTools (Lighthouse)
-
----
-
 ## Запуск проекта
 
 1. Клонировать репозиторий.
