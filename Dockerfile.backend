@@ -1,0 +1,21 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Установка nodemon для разработки
+RUN npm install -g nodemon
+
+# Копируем package.json и устанавливаем зависимости
+COPY PR7-11/shop-auth/backend/package*.json ./
+RUN npm install
+
+# Копируем исходный код
+COPY PR7-11/shop-auth/backend/ .
+
+# Добавляем healthcheck для мониторинга
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
