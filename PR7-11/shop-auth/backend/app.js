@@ -78,9 +78,16 @@ if (users.length === 0) {
 
 // ========== ТОВАРЫ ==========
 let products = [
-    { id: nanoid(8), title: "Акварель Белые ночи 24 цвета", category: "Краски", description: "Профессиональная акварель", price: 2450, stock: 15, image: "/images/akvarel.webp", ownerId: "admin", createdAt: new Date().toISOString() },
-    { id: nanoid(8), title: "Кисть синтетика круглая №2", category: "Кисти", description: "Синтетическая кисть", price: 180, stock: 50, image: "/images/brushes.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
-    { id: nanoid(8), title: "Холст на подрамнике 30x40 см", category: "Холсты", description: "Льняной холст", price: 890, stock: 8, image: "/images/canvas.webp", ownerId: "admin", createdAt: new Date().toISOString() }
+    { id: nanoid(8), title: "Акварель Белые ночи 24 цвета", category: "Краски", description: "Профессиональная акварель, 24 цвета", price: 2450, stock: 15, image: "/images/akvarel.webp", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Кисть синтетика круглая №2", category: "Кисти", description: "Синтетическая кисть, круглая форма", price: 180, stock: 50, image: "/images/brushes.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Холст на подрамнике 30x40 см", category: "Холсты", description: "Льняной холст, грунтованный", price: 890, stock: 8, image: "/images/canvas.webp", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Масляные краски Набор 12 цветов", category: "Краски", description: "Художественное масло, 12 цветов", price: 3200, stock: 7, image: "/images/oil.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Бумага для акварели А4", category: "Бумага", description: "Хлопковая бумага, 20 листов", price: 450, stock: 25, image: "/images/paper.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Набор карандашей графитных 12 шт", category: "Рисование", description: "Карандаши разной твердости", price: 650, stock: 20, image: "/images/pencils.webp", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Пастель масляная 24 цвета", category: "Пастель", description: "Масляная пастель, яркие цвета", price: 1200, stock: 12, image: "/images/pastel.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Мольберт треножник", category: "Мольберты", description: "Деревянный мольберт", price: 4500, stock: 3, image: "/images/easel.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Палитра пластиковая", category: "Аксессуары", description: "Для смешивания красок", price: 150, stock: 30, image: "/images/palette.jpg", ownerId: "admin", createdAt: new Date().toISOString() },
+    { id: nanoid(8), title: "Скетчбук А5 100 листов", category: "Бумага", description: "Для набросков", price: 350, stock: 25, image: "/images/sketchbook.jpg", ownerId: "admin", createdAt: new Date().toISOString() }
 ];
 
 // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
@@ -139,6 +146,9 @@ app.post('/api/auth/register', async (req, res) => {
     if (!email || !password || !first_name || !last_name) {
         return res.status(400).json({ error: 'All fields are required' });
     }
+    if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
     if (users.find(u => u.email === email)) {
         return res.status(409).json({ error: 'Email already exists' });
     }
@@ -182,9 +192,17 @@ app.post('/api/auth/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
     
-    res.json({ accessToken, refreshToken, user: {
-        id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role
-    } });
+    res.json({ 
+        accessToken, 
+        refreshToken, 
+        user: {
+            id: user.id,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            role: user.role
+        }
+    });
 });
 
 app.post('/api/auth/refresh', (req, res) => {
@@ -207,12 +225,26 @@ app.post('/api/auth/refresh', (req, res) => {
 app.get('/api/auth/me', authMiddleware, (req, res) => {
     const user = users.find(u => u.id === req.user.sub);
     if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role });
+    res.json({
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role
+    });
 });
 
 // ========== ПОЛЬЗОВАТЕЛИ (только админ) ==========
 app.get('/api/users', authMiddleware, roleMiddleware([ROLES.ADMIN]), (req, res) => {
-    res.json(users.map(u => ({ id: u.id, email: u.email, first_name: u.first_name, last_name: u.last_name, role: u.role, isActive: u.isActive })));
+    res.json(users.map(u => ({
+        id: u.id,
+        email: u.email,
+        first_name: u.first_name,
+        last_name: u.last_name,
+        role: u.role,
+        isActive: u.isActive,
+        createdAt: u.createdAt
+    })));
 });
 
 app.put('/api/users/:id', authMiddleware, roleMiddleware([ROLES.ADMIN]), (req, res) => {
@@ -230,7 +262,9 @@ app.put('/api/users/:id', authMiddleware, roleMiddleware([ROLES.ADMIN]), (req, r
 app.delete('/api/users/:id', authMiddleware, roleMiddleware([ROLES.ADMIN]), (req, res) => {
     const index = users.findIndex(u => u.id === req.params.id);
     if (index === -1) return res.status(404).json({ error: 'User not found' });
-    if (users[index].role === ROLES.ADMIN) return res.status(403).json({ error: 'Cannot block admin' });
+    if (users[index].role === ROLES.ADMIN) {
+        return res.status(403).json({ error: 'Cannot block admin user' });
+    }
     
     users[index].isActive = false;
     saveUsers(users);
@@ -238,7 +272,9 @@ app.delete('/api/users/:id', authMiddleware, roleMiddleware([ROLES.ADMIN]), (req
 });
 
 // ========== ТОВАРЫ ==========
-app.get('/api/products', (req, res) => res.json(products));
+app.get('/api/products', (req, res) => {
+    res.json(products);
+});
 
 app.get('/api/products/:id', (req, res) => {
     const product = products.find(p => p.id === req.params.id);
@@ -272,7 +308,16 @@ app.put('/api/products/:id', authMiddleware, roleMiddleware([ROLES.OPERATOR, ROL
     if (index === -1) return res.status(404).json({ error: 'Product not found' });
     
     const { title, category, description, price, stock, image } = req.body;
-    products[index] = { ...products[index], title: title.trim(), category: category.trim(), description: description.trim(), price: Number(price), stock: Number(stock) || products[index].stock, image: image || products[index].image, updatedAt: new Date().toISOString() };
+    products[index] = {
+        ...products[index],
+        title: title.trim(),
+        category: category.trim(),
+        description: description.trim(),
+        price: Number(price),
+        stock: Number(stock) || products[index].stock,
+        image: image || products[index].image,
+        updatedAt: new Date().toISOString()
+    };
     res.json(products[index]);
 });
 
@@ -287,7 +332,11 @@ const swaggerDocument = {
     openapi: '3.0.0',
     info: { title: 'API Художественного магазина', version: '1.0.0' },
     servers: [{ url: `http://localhost:${PORT}` }],
-    components: { securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' } } },
+    components: {
+        securitySchemes: {
+            bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+        }
+    },
     paths: {}
 };
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
